@@ -1,5 +1,7 @@
 # empeo registration - automation tests
 
+You can view the test source code and the test result videos at https://github.com/ssuphitcha/empeo-automation-test
+
 Playwright + TypeScript tests for the empeo sign-up page https://portal.uat.gofive.co.th/Register/empeo (UAT).
 
 1. [Test scope](#1-test-scope)
