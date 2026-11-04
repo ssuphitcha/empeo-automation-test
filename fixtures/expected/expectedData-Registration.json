@@ -1,0 +1,70 @@
+{
+  "MESSAGES": {
+    "th": {
+      "taxId": "กรุณากรอกเลขประจำตัวผู้เสียภาษีหรือชื่อบริษัท",
+      "companyOthers": "กรุณากรอกข้อมูลที่จำเป็นทั้งหมด",
+      "businessType": "กรุณากรอกประเภทธุรกิจ",
+      "userAmount": "กรุณากรอกผู้ใช้งาน",
+      "emailEmpty": "กรุณากรอกอีเมล",
+      "emailInvalid": "กรุณาใส่อีเมลที่ถูกต้อง",
+      "emailDomainUsed": "โดเมนนี้มีบัญชีใช้งานแล้ว",
+      "firstName": "กรุณากรอกชื่อ",
+      "lastName": "กรุณากรอกนามสกุล",
+      "phoneEmpty": "กรุณากรอกเบอร์โทรศัพท์มือถือ",
+      "phoneInvalid": "รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง",
+      "consent": "กรุณารับทราบนโยบายความเป็นส่วนตัว และข้อกำหนดและเงื่อนไขการใช้งาน",
+      "promoInvalid": "คูปองโค้ดไม่ถูกต้อง",
+      "companyUsed": "บริษัทนี้มีบัญชีใช้งานแล้ว",
+      "otpWrongTitle": "โปรดตรวจสอบอีกคร้ัง",
+      "otpWrongDescription": "OTP ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง",
+      "passwordEmpty": "กรุณากรอกรหัสผ่าน",
+      "confirmEmpty": "กรุณายืนยันรหัสผ่าน",
+      "passwordMismatch": "รหัสผ่านไม่ตรงกัน"
+    },
+    "en": {
+      "taxId": "Please fill in Tax ID or company name",
+      "companyOthers": "Please enter all required information.",
+      "businessType": "Please fill in your business type",
+      "userAmount": "Please fill in number of employee?",
+      "emailEmpty": "Please fill in e-mail",
+      "emailInvalid": "Please enter a valid email address.",
+      "emailDomainUsed": "This domain is already in use.",
+      "firstName": "Please fill in first name",
+      "lastName": "Please fill in last name",
+      "phoneEmpty": "Please fill in your mobile number",
+      "phoneInvalid": "Invalid mobile number",
+      "consent": "Please accept the Privacy Policy and Terms and Conditions",
+      "promoInvalid": "Invalid promo code",
+      "passwordEmpty": "Please fill in password",
+      "passwordMismatch": "The password confirmation doesn't match"
+    }
+  },
+  "PLACEHOLDER": {
+    "taxId": "กรอกเลขประจำตัวผู้เสียภาษี หรือ ชื่อบริษัท",
+    "companyOthers": "ชื่อบริษัท*",
+    "businessType": "ประเภทธุรกิจ*",
+    "userAmount": "ผู้ใช้งาน*"
+  },
+  "DROPDOWN": {
+    "businessTypeCount": 25,
+    "businessTypesTh": [
+      "ค้าปลีก", "eCommerce", "เทคโนโลยี", "ซอฟต์แวร์ การพัฒนาแอพ", "Infrastructure",
+      "บริการด้านไอที", "อุตสาหกรรม/โรงงาน", "การก่อสร้าง", "โรงแรม", "ยานยนต์",
+      "โลจิสติกส์", "นำเข้าและส่งออก", "สุขภาพ", "การแพทย์และร้านยา", "อาหารและเครื่องดื่ม",
+      "การเงินและประกันภัย", "สื่อและการตลาด", "อิเล็กทรอนิกส์", "องค์กรภาครัฐ",
+      "มูลนิธิสมาคมและศูนย์วิจัย", "การศึกษาและการฝึกอบรม", "อสังหาริมทรัพย์", "บัญชี", "บริการ", "อื่นๆ"
+    ],
+    "userAmounts": ["1-20", "21-50", "51-100", "101-200", "201-500", "501-1,000", "1,001-5,000", "5,001+"]
+  },
+  "API": {
+    "additionalInformation": { "status": 200, "code": 1000, "dataKeys": ["companyType", "userAmount", "experience"] },
+    "duplicateInfo": { "infoTypeName": "CompanyName", "productId": 102 },
+    "register": { "status": 200, "code": 1000, "productId": 102 },
+    "verifyOtp": { "status": 200, "okCode": 1000, "wrongCode": 4001, "wrongSubCode": "E4001" },
+    "createPassword": { "status": 200 }
+  },
+  "LINKS": {
+    "privacy": "https://www.empeo.com/privacy-policy/",
+    "terms": "https://www.empeo.com/terms-and-conditions/"
+  }
+}

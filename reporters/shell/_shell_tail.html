@@ -1,0 +1,319 @@
+
+
+let selectedId = null;
+function groupBySuite() {
+  const groups = {};
+  TESTS.forEach(t => { if (!groups[t.suite]) groups[t.suite]=[]; groups[t.suite].push(t); });
+  return groups;
+}
+function renderSidebar(filterText) {
+  const groups = groupBySuite();
+  const list = document.getElementById('sidebarList');
+  list.innerHTML = '';
+  // Pinned first: without it, clicking any case replaces the summary with no way back
+  // except reloading the whole (often very large) page.
+  const home = document.createElement('div');
+  home.className = 'test-item home' + (selectedId === null ? ' selected' : '');
+  home.onclick = () => showSummary();
+  home.innerHTML = '<span class="dot home"></span><span><span class="name">Summary</span>'
+                 + '<span class="id">overview &amp; totals</span></span>';
+  list.appendChild(home);
+  Object.keys(groups).forEach(suite => {
+    const items = groups[suite].filter(t => !filterText || t.localId.toLowerCase().includes(filterText) || t.name.toLowerCase().includes(filterText));
+    if (items.length === 0) return;
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.innerHTML = `<span>${suite}</span><span class="count">${items.length}</span>`;
+    list.appendChild(header);
+    items.forEach(t => {
+      const isFail = t.status === 'FAIL';
+      const isBlocked = t.status === 'BLOCKED';
+      const isSkip = t.status === 'SKIP';
+      const el = document.createElement('div');
+      el.className = 'test-item' + (t.id === selectedId
+        ? (' selected' + (isFail ? ' fail' : isBlocked ? ' blocked' : isSkip ? ' skip' : '')) : '');
+      el.onclick = () => selectTest(t.id);
+      el.innerHTML = `<span class="dot${isFail?' fail':isBlocked?' blocked':isSkip?' skip':''}"></span><span><span class="name">${escapeHtml(t.localId)} - ${escapeHtml(t.name)}</span><span class="id">${t.id}</span></span>`;
+      list.appendChild(el);
+    });
+  });
+}
+function filterTests() { renderSidebar(document.getElementById('filterInput').value.toLowerCase()); }
+function showSummary() {
+  selectedId = null;
+  renderSidebar(document.getElementById('filterInput').value.toLowerCase());
+  renderSummary();
+  document.getElementById('mainPanel').scrollTop = 0;
+}
+function selectTest(id) {
+  selectedId = id;
+  renderSidebar(document.getElementById('filterInput').value.toLowerCase());
+  const t = TESTS.find(x => x.id === id);
+  const main = document.getElementById('mainPanel');
+  const isFail = t.status === 'FAIL';
+  const isBlocked = t.status === 'BLOCKED';
+  const isSkip = t.status === 'SKIP';
+  let html = `
+    <div class="panel-header">
+      <div class="id">${t.id} (${escapeHtml(t.localId)})</div>
+      <h1>${escapeHtml(t.name)}</h1>
+      <div class="tags">
+        <span class="tag">${t.type}</span>
+        <span class="tag">priority: ${t.priority}</span>
+        <span class="tag ${isFail?'status-fail':isBlocked?'status-blocked':isSkip?'status-skip':'status-pass'}">${t.status}</span>
+      </div>
+    </div>
+  `;
+  if (t.precondition) {
+    if (t.ac) {
+    const items = (t.ac.items || []).map(a =>
+      `<li><span class="ac-id">${escapeHtml(a.id)}</span> — ${escapeHtml(a.text)}</li>`).join('');
+    html += `<div class="block"><div class="block-label">Acceptance Criteria ที่เคสนี้ครอบ</div>`
+      + `<div class="ac${items ? '' : ' none'}">`
+      + (items ? `<ul>${items}</ul>` : `ไม่มี AC ข้อไหนครอบเคสนี้`)
+      + (t.ac.why ? `<div class="ac-why">${escapeHtml(t.ac.why)}</div>` : '')
+      + `</div></div>`;
+  }
+  html += `<div class="block"><div class="block-label">Precondition</div><div class="box">${escapeHtml(t.precondition)}</div></div>`;
+  }
+  if (t.steps && t.steps.length) {
+    const rowCount = Math.max(t.steps.length, (t.expected||[]).length);
+    let stepRows = '';
+    for (let i=0; i<rowCount; i++) {
+      const step = t.steps[i] || '';
+      const exp = (t.expected||[])[i] || '';
+      stepRows += `<tr><td class="num">${i+1}</td><td>${escapeHtml(step)}</td><td class="expected">${escapeHtml(exp)}</td></tr>`;
+    }
+    html += `<div class="block"><div class="block-label">Test Steps vs Expected Result</div>
+      <table class="steps-table">
+        <tr><th>#</th><th>Test Step</th><th>Expected Result</th></tr>
+        ${stepRows}
+      </table>
+    </div>`;
+  }
+  let verdictInner;
+  if (t.checks && t.checks.length) {
+    const rows = t.checks.map(c => {
+      const mark = c.ok === false ? '<span class="ck no">✕</span>'
+                 : c.ok === null  ? '<span class="ck none">•</span>'
+                 : '<span class="ck ok">✓</span>';
+      return mark + `<span class="cl">${escapeHtml(c.label)}</span>`
+                  + `<span class="cv">${escapeHtml(String(c.value))}</span>`;
+    }).join('');
+    verdictInner = `<div><b>${t.status}</b></div><div class="checks">${rows}</div>`;
+  } else {
+    verdictInner = `<div><b>${t.status}</b> — ${escapeHtml(t.result)}</div>`;
+  }
+  const boxCls = isFail ? ' fail' : isBlocked ? ' blocked' : isSkip ? ' skip' : '';
+  const mark = isFail ? '✕' : isBlocked ? '!' : isSkip ? '–' : '✓';
+  html += `<div class="result-box${boxCls}"><div class="check">${mark}</div><div>${verdictInner}</div></div>`;
+  if (t.videos && t.videos.length) {
+    html += `<div class="block"><div class="block-label">Evidence Video</div><div class="img-gallery">${
+      t.videos.map((v,i)=>`<figure class="shot">
+        <div class="shot-head"><span class="n">▶</span>
+          <span>${escapeHtml(v.caption || 'Video')}</span>
+          <span class="fn">${escapeHtml(v.file)}</span></div>
+        <video class="native" src="${v.src}" controls preload="metadata"
+               onloadedmetadata="this.style.width=this.videoWidth+'px'"></video>
+      </figure>`).join('')
+    }</div></div>`;
+  }
+  if (t.timeline && t.timeline.length) {
+    const KIND = { cmd:'สั่งที่เทอร์มินอล', mock:'ม็อคข้อมูล', run:'ยิงเส้น', nav:'เปิดหน้าเว็บ',
+                   read:'อ่านค่าที่ render', shot:'ภาพหลักฐาน', watch:'เฝ้าดู',
+                   api:'เรียก API', db:'ม็อคข้อมูลเข้า DB', reset:'รีเซ็ตคืนสภาพ' };
+    let k = 0;
+    html += `<div class="block"><div class="block-label">ลำดับหลักฐาน — สั่งอะไร ได้อะไร ม็อคอะไร ผลเป็นอะไร</div><div class="tl">${
+      t.timeline.map(e => {
+        k++;
+        let body = `<div class="tl-kind">${escapeHtml(KIND[e.kind] || e.kind)}`
+          + (e.step ? ` · step ${e.step}${e.ng ? ' — สเตปนี้ไม่ผ่าน' : ''}` : '')
+          + `</div>`;
+        if (e.why) body += `<div class="tl-why">${escapeHtml(e.why)}</div>`;
+        if (e.cmd) body += `<pre class="tl-cmd">${escapeHtml(e.cmd)}</pre>`;
+        if (e.output) {
+          const j = renderJsonBlock(e.output);
+          body += j ? j : `<pre class="tl-out">${escapeHtml(e.output)}</pre>`;
+        }
+        if (e.api) {
+          const a = e.api, okCls = a.status >= 200 && a.status < 300 ? 'ok' : 'bad';
+          body += `<div class="apic">
+            <div class="apic-head"><span class="apic-verb ${escapeHtml(a.method)}">${escapeHtml(a.method)}</span>
+              <span class="apic-url">${escapeHtml(a.url)}</span></div>
+            ${a.auth ? `<div class="apic-auth"><b>${escapeHtml(a.authLabel || 'Cookie')}</b> ${escapeHtml(a.auth)}</div>` : ''}
+            ${a.request ? `<div class="apic-sec">Request body</div>${renderJsonBlock(a.request) || ''}` : ''}
+            <div class="apic-meta"><span>Status <span class="${okCls}">${a.status} ${escapeHtml(a.statusText || '')}</span></span>
+              ${a.time != null ? `<span>Time <b>${a.time} ms</b></span>` : ''}</div>
+            <div class="apic-sec">Response body</div>${renderJsonBlock(a.response) || '<pre class="tl-out" style="margin:6px 12px 12px">(empty)</pre>'}
+          </div>`;
+        }
+        if (e.db) {
+          const d = e.db;
+          body += `<div class="dbc">
+            <div class="dbc-head">${escapeHtml(d.database)} <span>›</span> ${escapeHtml(d.collection)}
+              <span> · ${d.count} document${d.count === 1 ? '' : 's'}</span></div>
+            <div class="dbc-body">
+              ${d.query ? `<div class="dbc-q">${escapeHtml(d.query)}</div>` : ''}
+              ${renderJsonBlock(d.document) || ''}
+            </div>
+          </div>`;
+        }
+        if (e.img) {
+          body += `<figure class="shot${e.tall ? ' tall' : ''}" style="margin:6px 0 0">
+            <div class="shot-head"><span class="n">${k}</span>
+              <span>${escapeHtml(e.caption || '')}</span>
+              <span class="fn">${escapeHtml(e.file || '')}</span>
+              <span class="zoom">กดที่รูปเพื่อดูเต็มขนาด</span></div>
+            <img src="${e.img}" onclick="openLightbox('${e.img}')"></figure>`;
+        }
+        const ng = e.ng ? ' ng' : '';
+        return `<div class="tl-row${ng}"><div class="tl-dot${ng}">${k}</div><div>${body}</div></div>`;
+      }).join('')
+    }</div></div>`;
+  } else if (t.images && t.images.length) {
+    html += `<div class="block"><div class="block-label">Evidence Screenshots</div><div class="img-gallery">${
+      t.images.map((im,i)=>`<figure class="shot">
+        <div class="shot-head"><span class="n">${i+1}</span>
+          <span>${escapeHtml(im.caption || 'Screenshot')}</span>
+          <span class="fn">${escapeHtml(im.file)}</span></div>
+        <img src="${im.src}" onclick="openLightbox('${im.src}')">
+      </figure>`).join('')
+    }</div></div>`;
+  }
+  if (t.extras && t.extras.length) {
+    html += `<div class="block"><details class="extras" id="extrasBox">
+      <summary>ภาพเพิ่มเติม (${t.extras.length})
+        <span class="extras-tag">responsive มือถือ · ?display=full — กดเพื่อดู</span></summary>
+      <div class="extras-body">${
+        t.extras.map((im,i)=>`<figure class="shot tall" style="margin:0">
+          <div class="shot-head"><span class="n">${i+1}</span>
+            <span>${escapeHtml(im.caption || '')}</span>
+            <span class="fn">${escapeHtml(im.file || '')}</span>
+            <span class="zoom">กดที่รูปเพื่อดูเต็มขนาด</span></div>
+          <img src="${im.img}" onclick="openLightbox('${im.img}')">
+        </figure>`).join('')
+      }</div>
+      <div class="extras-foot"><button onclick="collapseExtras(event)">พับเก็บ ▴</button></div>
+    </details></div>`;
+  }
+  main.innerHTML = html;
+}
+function collapseExtras(ev) {
+  ev.preventDefault();
+  const d = document.getElementById('extrasBox');
+  if (!d) return;
+  d.open = false;
+  d.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+function renderJsonBlock(raw) {
+  let text = String(raw);
+  try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (e) { return null; }
+  const esc = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const coloured = esc.replace(
+    /("(?:\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:[ \t]*:)?)|\b(true|false)\b|\bnull\b|(-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    (m) => {
+      let cls;
+      if (/^"/.test(m)) cls = /:$/.test(m) ? 'jkey' : 'jstr';
+      else if (/^(true|false)$/.test(m)) cls = 'jbool';
+      else if (m === 'null') cls = 'jnull';
+      else cls = 'jnum';
+      return '<span class="' + cls + '">' + m + '</span>';
+    }
+  ).replace(/([{}\[\],])/g, '<span class="jpunc">$1</span>');
+  const n = text.split('\n').length;
+  let gutter = '';
+  for (let i = 1; i <= n; i++) gutter += (i > 1 ? '\n' : '') + i;
+  return '<div class="jsonview"><pre class="gutter">' + gutter + '</pre>'
+       + '<pre class="jcode">' + coloured + '</pre></div>';
+}
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderSummary() {
+  const main = document.getElementById('mainPanel');
+  const bySuite = groupBySuite();
+  const total = TESTS.length;
+  const passed = TESTS.filter(t=>t.status==='PASS').length;
+  const blocked = TESTS.filter(t=>t.status==='BLOCKED').length;
+  const skipped = TESTS.filter(t=>t.status==='SKIP').length;
+  const failed = total - passed - blocked - skipped;
+  const executable = total - blocked - skipped;
+  const passRate = executable ? Math.round((passed/executable)*100) : 0;
+  document.getElementById('topbarTitle').textContent = REPORT_META.title;
+  document.getElementById('topbarSub').textContent = REPORT_META.environments;
+  document.getElementById('topbarDate').textContent = REPORT_META.dateTested;
+  document.getElementById('pillPass').textContent = `✓ ${passed} passed`;
+  const pillFail = document.getElementById('pillFail');
+  pillFail.textContent = `✕ ${failed} failed`;
+  pillFail.style.display = failed>0 ? 'inline-flex':'none';
+  const pillSkip = document.getElementById('pillSkip');
+  if (pillSkip) {
+    pillSkip.textContent = `– ${skipped} skipped`;
+    pillSkip.style.display = skipped>0 ? 'inline-flex':'none';
+  }
+  const pillBlocked = document.getElementById('pillBlocked');
+  if (pillBlocked) {
+    pillBlocked.textContent = `! ${blocked} blocked`;
+    pillBlocked.style.display = blocked>0 ? 'inline-flex':'none';
+  }
+  let rows = '';
+  Object.keys(bySuite).forEach(suite => {
+    const items = bySuite[suite];
+    const suitePass = items.filter(t=>t.status==='PASS').length;
+    const suiteBlocked = items.filter(t=>t.status==='BLOCKED').length;
+    const suiteSkip = items.filter(t=>t.status==='SKIP').length;
+    const suiteFail = items.length - suitePass - suiteBlocked - suiteSkip;
+    rows += `<tr><td>${escapeHtml(suite)}</td><td class="num">${items.length}</td><td class="num">${suitePass}</td><td class="num">${suiteFail}</td><td class="num">${suiteBlocked}</td><td class="num">${suiteSkip}</td></tr>`;
+  });
+  main.innerHTML = `
+    <div class="summary-view">
+      <h1>${escapeHtml(REPORT_META.title)}</h1>
+      <div class="meta-list">
+        <div><b>Site:</b> <a href="${REPORT_META.jiraUrl}" target="_blank">${REPORT_META.jiraUrl}</a></div>
+        <div><b>Scope:</b> ${escapeHtml(REPORT_META.scope)}</div>
+        <div><b>Tested via:</b> ${escapeHtml(REPORT_META.testedVia)}</div>
+        <div><b>Environments:</b> ${escapeHtml(REPORT_META.environments)}</div>
+        <div><b>Date tested:</b> ${escapeHtml(REPORT_META.dateTested)}</div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card pass"><div class="num">${total}</div><div class="label">Total tests</div></div>
+        <div class="summary-card pass"><div class="num">${passed}</div><div class="label">Passed</div></div>
+        <div class="summary-card fail"><div class="num">${failed}</div><div class="label">Failed</div></div>
+        <div class="summary-card blocked"><div class="num">${blocked}</div><div class="label">Blocked</div></div>
+        <div class="summary-card skip"><div class="num">${skipped}</div><div class="label">Skipped</div></div>
+        <div class="summary-card"><div class="num">${passRate}%</div><div class="label">Pass rate</div></div>
+      </div>
+      <table class="summary"><tr><th>Test Suite</th><th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Blocked</th><th class="num">Skip</th></tr>${rows}<tr style="font-weight:700;background:var(--code-bg);"><td>Total</td><td class="num">${total}</td><td class="num">${passed}</td><td class="num">${failed}</td><td class="num">${blocked}</td><td class="num">${skipped}</td></tr></table>
+      <p style="color:var(--muted);font-size:12.5px;margin-top:20px;">Select a test case from the sidebar to view its precondition, steps, and evidence (video where recorded, then screenshots). Click <b>Summary</b> at the top of the sidebar to return here.</p>
+    </div>
+  `;
+}
+renderSidebar('');
+renderSummary();
+
+(function() {
+  const sidebar = document.getElementById('sidebar');
+  const handle = document.getElementById('resizeHandle');
+  let dragging = false;
+  handle.addEventListener('mousedown', (e) => {
+    dragging = true;
+    handle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const w = Math.min(Math.max(e.clientX, 220), 720);
+    sidebar.style.width = w + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.userSelect = '';
+  });
+})();
+</script>
+</body>
+</html>

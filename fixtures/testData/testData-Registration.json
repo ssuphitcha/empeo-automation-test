@@ -1,0 +1,111 @@
+{
+  "COMPANY_SEARCH": {
+    "thai_name": "ซีพี",
+    "english_name": "TURKMENISTAN",
+    "english_company_full": "TURKMENISTAN AIRLINES",
+    "english_company_tax_id": "0993000277309",
+    "unknown_name": "zzqqxx999",
+    "thai_2_chars": "กา",
+    "english_2_chars": "TU",
+    "thai_3_chars": "การ",
+    "english_3_chars": "TUR",
+    "thai_long": "การบิน",
+    "english_long": "TURK",
+    "tax_id_7": "0105545",
+    "tax_id_12": "010554506883",
+    "tax_id_13": "0105545068839",
+    "tax_id_14": "01055450688391",
+    "japanese": "テスト",
+    "japanese_company": "テスト株式会社",
+    "japanese_tax_id": "9999999999991",
+    "special": "!@#$%^&*(),.",
+    "special_short": ",.",
+    "mixed": "Test บริษัท",
+    "cpc_company_full": "บริษัท ซีพีซี อินเตอร์เนชั่นแนล (ประเทศไทย) จำกัด",
+    "cpc_company_part": "ซีพีซี อินเตอร์เนชั่นแนล (ประเทศไทย) จำกัด"
+  },
+  "TEXT": {
+    "thai": "ทดสอบ",
+    "english": "Tester",
+    "japanese": "テスト",
+    "special": "!@#$%^&*()<>\"'/\\.,-",
+    "mixed": "Test ทดสอบ テスト",
+    "digits": "12345",
+    "spaces_3": "   ",
+    "spaces_5": "     ",
+    "emoji_company": "บริษัท😀",
+    "padded_company": "  บริษัท ทดสอบ จำกัด  ",
+    "existing_company_name": "บริษัท",
+    "company_thai": "บริษัท ทดสอบ จำกัด",
+    "company_english": "Test Company Ltd",
+    "company_japanese": "テスト株式会社",
+    "company_mixed": "Test บริษัท テスト",
+    "company_digits": "1234567890",
+    "company_special": "!@#$%^&*()<>\"'/\\",
+    "company_special_dot_comma": "Co., Ltd.",
+    "company_single_char_en": "a",
+    "company_single_char_th": "ก"
+  },
+  "LENGTH": {
+    "text_max": 255,
+    "email_max": 150,
+    "promo_max": 50,
+    "phone_max": 15
+  },
+  "DROPDOWN": {
+    "business_type": "eCommerce",
+    "business_type_other": "เทคโนโลยี",
+    "user_amount": "21-50",
+    "user_amount_other": "51-100",
+    "user_amount_default": "1-20"
+  },
+  "EMAIL": {
+    "valid_fresh_domain": "qa.empeo+t1@gmail.com",
+    "domain_in_use_1": "qa.tester@example.com",
+    "domain_in_use_2": "qa.automation.test@mailinator.com",
+    "thai": "ทดสอบ@gmail.com",
+    "english": "qa.tester@gmail.com",
+    "japanese": "テスト@gmail.com",
+    "special": "qa+tag_!#$%&'*/=?^`{|}~-@gmail.com",
+    "digits": "12345678@gmail.com",
+    "invalid_formats": ["not-an-email", "a@b", "a@b.", "qa.tester@example", "@example.com", "qa@@example.com"],
+    "short_invalid": "q",
+    "short_valid": "qa@b.co"
+  },
+  "PHONE": {
+    "thai_leading_0": "0812345678",
+    "thai_no_leading_0": "812345678",
+    "japan": "09012345678",
+    "thai_11_digits": "08123456789",
+    "too_long": "12345678901234567890",
+    "thai_9_digits": "081234567",
+    "five_digits": "12345",
+    "letters": "abc"
+  },
+  "PROMO": {
+    "valid": "FREE15DAY",
+    "lowercase": "free15day",
+    "invalid": "INVALIDCODE123",
+    "thai": "ทดสอบ",
+    "japanese": "テスト",
+    "special": "!@#$%^&*()",
+    "mixed": "Test ทดสอบ テスト",
+    "digits": "12345",
+    "with_spaces": " FREE15DAY "
+  },
+  "PASSWORD": {
+    "valid": "QAtest01",
+    "valid_alt": "Abcdefg1",
+    "only_lowercase": "abcdefg1",
+    "only_uppercase": "ABCDEFG1",
+    "no_digit": "Abcdefgh",
+    "too_short": "Abc1234",
+    "weak": "abc",
+    "mismatch_partial": "Abcdefg",
+    "mismatch_other": "Abcdefg2"
+  },
+  "OTP": {
+    "wrong": "111111",
+    "five_digits": "11111"
+  }
+}
