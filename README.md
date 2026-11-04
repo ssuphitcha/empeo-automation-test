@@ -8,6 +8,7 @@ Playwright + TypeScript tests for the empeo sign-up page https://portal.uat.gofi
 4. [Test results](#4-test-results)
 5. [Bugs found](#5-bugs-found)
 6. [How to run](#6-how-to-run)
+7. [Result report and videos](#7-result-report-and-videos)
 
 ## 1. Test scope
 
@@ -223,17 +224,6 @@ Last run: **2026-11-04** (UAT, Chromium) - 14 scenarios, **11 passed, 3 failed**
 | M13 Password API 500 | ✅ PASS | - |
 | M14 Login | ❌ FAIL | BUG B1: for a Thai company the correct OTP is rejected (status.code 4001), the account cannot be created |
 
-### Where are the result files and videos
-
-The run output is large (about 160 MB), so it is **not stored in this repository** (`results/<run id>/` is git-ignored). The files of the run above are submitted together with this document, as separate attachments:
-
-| File | What it is |
-|---|---|
-| `evidence-report.html` | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. Open it in a browser |
-| `M01-....mp4` to `M14-....mp4` | One video per scenario (14 files). A red frame marks every click/typing and the step title is shown at the bottom |
-
-On the machine that ran the tests the same files are in `results/2026-11-04_08-25-50/` (`evidence-report.html` and `videos/`, which holds `.mp4` and `.webm` copies). To produce them again, run the tests as described in [How to run](#6-how-to-run); every run writes a new `results/<run id>/` folder.
-
 ## 5. Bugs found
 
 `Likely bug` = behaviour that is clearly wrong; `Spec to confirm` = UAT behaves in a way that may be intended, the team has to decide; `tbc` = cannot be decided yet.
@@ -322,3 +312,14 @@ One scenario: `node scripts/run-tests.js testcases/register/m05-missing-required
 - Each scenario is one test; its test cases are the steps inside it (the step title says what is typed, selected or clicked).
 - Annotations: `known-finding` = UAT differs from the expected result (see "Actual result" in TEST_CASES.md);
   `finding-fixed` = the expected behaviour works now (update the case); `tbc-observed` = case not executed before, the run records what UAT answered.
+
+## 7. Result report and videos
+
+The run output is large (about 160 MB), so it is **not stored in this repository** (`results/<run id>/` is git-ignored). The files of the run above are submitted together with this document, as separate attachments:
+
+| File | What it is |
+|---|---|
+| `evidence-report.html` | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. Open it in a browser |
+| `M01-....mp4` to `M14-....mp4` | One video per scenario (14 files). A red frame marks every click/typing and the step title is shown at the bottom |
+
+On the machine that ran the tests the same files are in `results/2026-11-04_08-25-50/` (`evidence-report.html` and `videos/`, which holds `.mp4` and `.webm` copies). To produce them again, run the tests as described in [How to run](#6-how-to-run); every run writes a new `results/<run id>/` folder.
