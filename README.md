@@ -315,11 +315,11 @@ One scenario: `node scripts/run-tests.js testcases/register/m05-missing-required
 
 ## 7. Result report and videos
 
-The files of the last run (section 4) are in the repository folder **[run-results/](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results)** (click to open it):
+The files of the last run (section 4) are in the repository folder **[run-results/](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results)** (click to open it). The report and the videos are meant to be **downloaded and viewed locally**: on the folder page open a file and use the download button, or clone the repository (see [How to run](#6-how-to-run)).
 
 | File | What it is |
 |---|---|
-| [`run-results/evidence-report.html`](https://github.com/ssuphitcha/empeo-automation-test/blob/main/run-results/evidence-report.html) | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. Download it and open it in a browser (GitHub only shows its source) |
-| [`run-results/videos/`](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results/videos) | One video per scenario, `M01-....mp4` to `M14-....mp4` (14 files). A red frame marks every click/typing and the step title is shown at the bottom |
+| [`run-results/evidence-report.html`](https://github.com/ssuphitcha/empeo-automation-test/blob/main/run-results/evidence-report.html) | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. **Download it to view on your local machine** and open it in a browser (GitHub only shows its source) |
+| [`run-results/videos/`](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results/videos) | One video per scenario, `M01-....mp4` to `M14-....mp4` (14 files). A red frame marks every click/typing and the step title is shown at the bottom. **Download the files to watch them on your local machine** |
 
 The folder holds only the final merged result of the last run. Every new run writes a fresh `results/<run id>/` folder on your machine (git-ignored); see [How to run](#6-how-to-run).
