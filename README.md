@@ -315,11 +315,11 @@ One scenario: `node scripts/run-tests.js testcases/register/m05-missing-required
 
 ## 7. Result report and videos
 
-The run output is large (about 160 MB), so it is **not stored in this repository** (`results/<run id>/` is git-ignored). The files of the run above are submitted together with this document, as separate attachments:
+The files of the last run (section 4) are in the repository folder **[run-results/](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results)** (click to open it):
 
 | File | What it is |
 |---|---|
-| `evidence-report.html` | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. Open it in a browser |
-| `M01-....mp4` to `M14-....mp4` | One video per scenario (14 files). A red frame marks every click/typing and the step title is shown at the bottom |
+| [`run-results/evidence-report.html`](https://github.com/ssuphitcha/empeo-automation-test/blob/main/run-results/evidence-report.html) | Single-file evidence report: scenario list, steps, API request/response cards and the embedded video of each scenario. Download it and open it in a browser (GitHub only shows its source) |
+| [`run-results/videos/`](https://github.com/ssuphitcha/empeo-automation-test/tree/main/run-results/videos) | One video per scenario, `M01-....mp4` to `M14-....mp4` (14 files). A red frame marks every click/typing and the step title is shown at the bottom |
 
-On the machine that ran the tests the same files are in `results/2026-11-04_08-25-50/` (`evidence-report.html` and `videos/`, which holds `.mp4` and `.webm` copies). To produce them again, run the tests as described in [How to run](#6-how-to-run); every run writes a new `results/<run id>/` folder.
+The folder holds only the final merged result of the last run. Every new run writes a fresh `results/<run id>/` folder on your machine (git-ignored); see [How to run](#6-how-to-run).
